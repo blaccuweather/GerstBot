@@ -28,7 +28,7 @@ var bot = new irc.Client('irc.freenode.net', 'GerstBot', {
 
 var auth = function(to, pass) {
 	bot.say(to, pass);
-	//bot.join('#Fillydelphia');
+	bot.join('#Fillydelphia');
 };
 
 var commands = [
@@ -47,10 +47,38 @@ var commands = [
 		}
 	},
 	{
+		command: /^\.concept/i,
+		action: function(from, to, message) {
+			var query = message.substr(9);
+			api_request('/api/search/?api_key=c694d7e345cf14edc0715605f66e19d83317760d&limit=1&resources=game&query=' + encodeURIComponent(query) + '&format=json', function(data) {
+				if ( data.number_of_total_results > 0 ) {
+					bot.say(to, from + ': ' + data.results[0].name + ' ' + data.results[0].site_detail_url);
+				}
+				else {
+					bot.say(to, from +': ' + query + '?  The fuck is that?');
+				}
+			});
+		}
+	},
+	{
 		command: /^\.game/i,
 		action: function(from, to, message) {
 			var query = message.substr(6);
 			api_request('/api/search/?api_key=c694d7e345cf14edc0715605f66e19d83317760d&limit=1&resources=game&query=' + encodeURIComponent(query) + '&format=json', function(data) {
+				if ( data.number_of_total_results > 0 ) {
+					bot.say(to, from + ': ' + data.results[0].name + ' ' + data.results[0].site_detail_url);
+				}
+				else {
+					bot.say(to, from +': ' + query + '?  The fuck is that?');
+				}
+			});
+		}
+	},
+	{
+		command: /^\.vid/i,
+		action: function(from, to, message) {
+			var query = message.substr(5);
+			api_request('/api/search/?api_key=c694d7e345cf14edc0715605f66e19d83317760d&limit=1&resources=video&query=' + encodeURIComponent(query) + '&format=json', function(data) {
 				if ( data.number_of_total_results > 0 ) {
 					bot.say(to, from + ': ' + data.results[0].name + ' ' + data.results[0].site_detail_url);
 				}
